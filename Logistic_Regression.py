@@ -32,6 +32,7 @@ class logistic_regression(object):
     
     def train(self, X, Y, num_iter, lr, print_flag = False):
         for i in range(num_iter):
+            #针对每次迭代，更新代价函数和梯度
             grads, cost = self.back_propagate(X, Y)
             self.W = self.W - lr * grads[0]
             self.b = self.b - lr * grads[1]
@@ -57,6 +58,7 @@ if __name__ == '__main__':
     data_path = "./data/data_vector.csv"
     df = pd.read_csv(data_path, header=None)
     df = df.sample(frac=1)
+    #前128列为句子向量化后数据，最后1列为标签
     data = df.iloc[:, 0:128].values
     label = df.iloc[:, 128].values.reshape((data.shape[0],1))
     x_train, x_test, y_train, y_test = train_test_split(data, label, test_size = 0.2)
