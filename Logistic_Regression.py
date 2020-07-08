@@ -19,7 +19,7 @@ class logistic_regression(object):
         self.W = np.zeros((n_in, n_out))
         self.b = np.zeros((n_out,))
         
-    def forward_propagate(self, X, Y):
+    def back_propagate(self, X, Y):
         m = X.shape[1]
         h = sigmoid(np.dot(X, self.W) + self.b)
         #print(Y, Y.T)
@@ -32,7 +32,7 @@ class logistic_regression(object):
     
     def train(self, X, Y, num_iter, lr, print_flag = False):
         for i in range(num_iter):
-            grads, cost = self.forward_propagate(X, Y)
+            grads, cost = self.back_propagate(X, Y)
             self.W = self.W - lr * grads[0]
             self.b = self.b - lr * grads[1]
             if print_flag and i % 5000 == 0:
@@ -57,8 +57,8 @@ if __name__ == '__main__':
     data_path = "./data/data_vector.csv"
     df = pd.read_csv(data_path, header=None)
     df = df.sample(frac=1)
-    data = df.iloc[:, 0:100].values
-    label = df.iloc[:, 100].values.reshape((data.shape[0],1))
+    data = df.iloc[:, 0:128].values
+    label = df.iloc[:, 128].values.reshape((data.shape[0],1))
     x_train, x_test, y_train, y_test = train_test_split(data, label, test_size = 0.2)
     classifier = logistic_regression(data.shape[1], 1)
     classifier.train(x_train, y_train, 50000, 0.001, print_flag = True)

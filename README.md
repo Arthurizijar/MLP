@@ -5,3 +5,5 @@
 - 运行dataset.py，统计词频前TopK的词语，并用TF-IDF将每条评论embedding为TopK维向量
 - 运行Logistic_Regression.py/MLP.py 训练模型并测试正确率
 
+数据集下载地址： https://github.com/SophonPlus/ChineseNlpCorpus 
+

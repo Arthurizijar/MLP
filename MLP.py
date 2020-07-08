@@ -15,7 +15,7 @@ def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
 def tanh(x):
-    return x
+    return (np.exp(x) - np.exp(-x)) / (np.exp(x) + np.exp(-x))
 
 def derivative(z, fn):
     if fn == 'sigmoid':
@@ -40,19 +40,21 @@ class hidden_layer(object):
     
 
 class MLP(object):
-    def __init__(self, n_in, n_hidden_1, n_hidden_2, n_out, rng):
+    def __init__(self, n_in, n_hidden_1, n_hidden_2, n_hidden_3, n_out, rng):
         
         self.hidden_1 = hidden_layer(n_in, n_hidden_1, rng)
         
         self.hidden_2 = hidden_layer(n_hidden_1, n_hidden_2, rng)
         
-        self.logistic = LR.logistic_regression(n_hidden_2, n_out)
+        self.hidden_3 = hidden_layer(n_hidden_2, n_hidden_3, rng)
+        
+        self.logistic = LR.logistic_regression(n_hidden_3, n_out)
                 
-        self.W = [self.hidden_1.W, self.hidden_2.W, self.logistic.W]
+        self.W = [self.hidden_1.W, self.hidden_2.W, self.hidden_3.W, self.logistic.W]
         
-        self.b = [self.hidden_1.b, self.hidden_2.b, self.logistic.b]
+        self.b = [self.hidden_1.b, self.hidden_2.b, self.hidden_3.b, self.logistic.b]
         
-        self.activation = [self.hidden_1.activation, self.hidden_2.activation, 'sigmoid']
+        self.activation = [self.hidden_1.activation, self.hidden_2.activation, self.hidden_3.activation, 'sigmoid']
         
     def train(self, X, Y, L1_reg, L2_reg, num_iter, batch_size, lr, regularization = "L2", print_flag = False):
         self.l1_reg = L1_reg
@@ -128,13 +130,13 @@ if __name__ == '__main__':
     data_path = "./data/data_vector.csv"
     df = pd.read_csv(data_path, header=None)
     df = df.sample(frac=1)
-    data = df.iloc[:, 0:100].values
-    label = df.iloc[:, 100].values.reshape((data.shape[0],1))
+    data = df.iloc[:, 0:128].values
+    label = df.iloc[:, 128].values.reshape((data.shape[0],1))
     rng = np.random.RandomState(666)
     x_train, x_test, y_train, y_test = train_test_split(data, label, test_size = 0.2)
     
-    classifier = MLP(x_train.shape[1], 64, 16, 1, rng)
-    classifier.train(x_train, y_train, 0.00, 0.0001, 2500, 20, 0.001, regularization = 'L1', print_flag = True)
+    classifier = MLP(x_train.shape[1], 64, 32, 16, 1, rng)
+    classifier.train(x_train, y_train, 0.00, 0.001, 2500, 20, 0.005, regularization = 'L2', print_flag = True)
     y_pred_test = classifier.predict(x_test)
     print("测试集正确率为: {} %".format(100 - np.mean(np.abs(y_pred_test - y_test)) * 100))
     
